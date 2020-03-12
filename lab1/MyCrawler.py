@@ -42,7 +42,8 @@ class MyCrawler:
             td = j.find_all('td')
             Name = td[1].get_text().strip()
             Value = td[2].get_text().strip()
-            self.list.append([Name, Value])
+            Des = td[3].get_text().strip()
+            self.list.append([Name, Value,Des])
         return self.list
 
 
