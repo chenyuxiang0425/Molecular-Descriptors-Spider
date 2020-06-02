@@ -1,6 +1,7 @@
 from lab1.MyCrawler import MyCrawler
 import pandas as pd
-
+import time
+import random
 
 class CrawlerRunner:
     def __init__(self):
@@ -39,26 +40,51 @@ class CrawlerRunner:
             oldData.to_csv(filename, index=False)
 
 
+
     @staticmethod
-    def main():
-        dataframe = pd.read_csv('moleculeList.csv', header=0)
+    def main_function(begin_index,length,filename):
+
+        def check_symbol(symbol):
+            list_a = ['Br', 'Cl', 'B', 'F', 'Si', 'P', 'Al', 'Se']
+            for a in list_a:
+                if symbol.count(a):
+                    return True
+            return False
+
+        # dataframe = pd.read_csv('moleculeList.csv', header=0)
         URL = "http://michem.disat.unimib.it/mole_db/desc_values.php"
 
         groups = [1, 2, 4, 5, 6, 8, 10, 12, 15, 16, 17, 18, 20]
-        id = CrawlerRunner.dataFrameToList(dataframe, "ID")
-        name = CrawlerRunner.dataFrameToList(dataframe, "Name")
-
+        # id = CrawlerRunner.dataFrameToList(dataframe, "ID")
+        # name = CrawlerRunner.dataFrameToList(dataframe, "Name")
+        ids = [i for i in range(begin_index, begin_index+length)]
         myCrawler = MyCrawler()
-        for (id, name) in zip(id, name):
+        #for (id, name) in zip(id, name):
+        for id in ids:
+            url = myCrawler.getUrl(URL, id, 1)
+            response_for_name = myCrawler.response_for_name(url)
+            # symbol
+            response_for_symbol = myCrawler.response_for_symbol(url)
+            time.sleep(random.randint(1, 4))
+            if (response_for_name == '<b><i>No name</i></b>' ):
+                print("%d pass" %(id))
+                continue
+
+            if (check_symbol(response_for_symbol)):
+                print("%d has nonconforming symbol" %(id))
+                continue
+
+
             for group in groups:
                 url = myCrawler.getUrl(URL, id, group)
                 print(url)
                 coarseResponse = myCrawler.response(url)
                 response = myCrawler.dealWithResponse(group, coarseResponse)
-                print(response)
-
-            CrawlerRunner.writeInCsv(name, response)
-
+                #print(response)
+            response.append(['id',id])
+            response.append(['symbol',response_for_symbol])
+            CrawlerRunner.writeInCsv(response_for_name, response,filename)
 
 if __name__ == '__main__':
-    CrawlerRunner.main()
+    CrawlerRunner.main_function(1,1000,"ddd.csv")
+

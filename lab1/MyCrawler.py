@@ -1,12 +1,12 @@
 import requests
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup,NavigableString,Tag
 
 
 class MyCrawler:
     def __init__(self):
         self.headers = {'User-Agent':
-                            'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) '
-                            'Chrome/63.0.3239.132 Safari/537.36'}
+                            'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko)'
+                            'Chrome/39.0.2171.71 Safari/537.36'}
         # list of values from website
         self.list = []
         # check connect status
@@ -30,6 +30,31 @@ class MyCrawler:
         tr = soup.find('table').find_all('tr')
         return tr
 
+    def response_for_name(self, url):
+        """
+        :param url: the target url
+        :return: return the source code of the website
+        """
+        response = self.avoidTimeOut(url, 20)
+        soup = BeautifulSoup(response.text, 'html.parser')
+        name = soup.find('b')
+        return str(name)
+
+    def response_for_symbol(self, url):
+        """
+        :param url: the target url
+        :return: return the symbol of the website
+        """
+        response = self.avoidTimeOut(url, 20)
+        soup = BeautifulSoup(response.text, 'html.parser')
+        new_soup = str(soup).replace("</sub>", "").replace("<sub>","")
+        index = 0
+        for br in BeautifulSoup(new_soup, 'html.parser').findAll('br'):
+            if (index == 2):
+                next = br.nextSibling
+                return next
+            index +=1
+
     def dealWithResponse(self, group, response):
         """
         deal with the sourse code of the website to bring what values we want
@@ -42,8 +67,10 @@ class MyCrawler:
             td = j.find_all('td')
             Name = td[1].get_text().strip()
             Value = td[2].get_text().strip()
-            Des = td[3].get_text().strip()
-            self.list.append([Name, Value,Des])
+            # 写入标签
+            #Des = td[3].get_text().strip()
+            #self.list.append([Name, Value,Des])
+            self.list.append([Name, Value])
         return self.list
 
 
