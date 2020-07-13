@@ -1,5 +1,5 @@
 # Molecular-Descriptors-Spider
-一个获取化学分子描述符数据 (由[米兰比可卡大学地球与环境科学系](http://michem.disat.unimib.it/mole_db/)发布) 的多线程Python爬虫程序。
+一个获取化学分子描述符数据 ([米兰比可卡大学地球与环境科学系](http://michem.disat.unimib.it/mole_db/)) 的多线程Python爬虫程序。
 
 简介：
 
