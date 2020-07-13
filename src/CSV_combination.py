@@ -3,6 +3,8 @@ import os
 import pandas as pd
 import glob
 
+
+# 合并文件
 def combine(in_dir= './1finish/',out_dir = 'result.csv'):
     csv_list = glob.glob(in_dir + '*.csv')  # 查看同文件夹下的csv文件数
     print(u'共发现%s个CSV文件' % len(csv_list))
@@ -13,11 +15,15 @@ def combine(in_dir= './1finish/',out_dir = 'result.csv'):
             f.write(fr)
     print(u'合并完毕！')
 
+
+# 删除重复数据
 def remove_duplicates(in_filename='./result.csv'):
     frame = pd.read_csv(in_filename)
     frame.drop_duplicates(subset=None, keep='first', inplace=True)
     print(u'完毕！')
 
+
+# 转置
 def transpose(in_dir='./1/', out_dir='./1finish/'):
     filenames_in = in_dir  # 输入文件的文件地址
     filenames_out = out_dir  # 新文件的地址
